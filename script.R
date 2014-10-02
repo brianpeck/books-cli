@@ -6,6 +6,7 @@
 source('~/other/books-cli/csvinterface.R')
 source('~/other/books-cli/books.R')
 source('~/other/books-cli/uuid.R')
+source('~/other/books-cli/userinterface.R')
 args <- commandArgs(TRUE)
 
 options <- c("Add New Book","Add Reading Progress")
@@ -20,4 +21,5 @@ test2 <- function() {
 
 #cat(args,"\n",sep=",")
 
-book.num <- menu(strtrim(list.book.titles(),32),title="Select Book:")
+a <- user.response("Testing")
+a

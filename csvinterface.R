@@ -21,8 +21,13 @@ add.booktag <- function(book.id,tag) {
   append.bookfile("tags",data.frame(book.id,tag))
 }
 
-add.log <- function(book.id,date,startpos,stoppos,type) {
-  append.bookfile("log",data.frame(date,book.id,startpos,stoppos,type))
+add.log <- function(book.id,date,startpos,stoppos,type,pages) {
+  append.bookfile("log",data.frame(date,book.id,startpos,stoppos,type,pages))
+}
+
+#' Naming things is hard.
+add.reading <- function(book.id,type,progress,total) {
+  append.bookfile("curreading",data.frame(book.id,type,progress,total))
 }
 
 #' add.author
@@ -98,5 +103,16 @@ read.bookfile <- function(file) {
   read.csv(
     paste0(book_dir,"/",file,".csv"),
     fill=TRUE
+  )
+}
+
+write.bookfile <- function(file,data) {
+  write.table(
+    x=data,
+    file=paste0(book_dir,"/",file,".csv"),
+    col.names = TRUE,
+    append = FALSE,
+    row.names = FALSE,
+    sep = ","
   )
 }

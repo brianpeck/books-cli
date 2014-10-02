@@ -3,26 +3,34 @@ source("csvinterface.R")
 source("pages.R")
 source("plotting.R")
 source("tags.R")
+source("curreading.R")
+source("userinterface.R")
 
 authors <- setup.csv("authors")
 tags <- setup.csv("tags")
 booksauthors <- setup.csv("booksauthors")
 books <- setup.csv("books")
 log <- setup.csv("log")
-readings <- setup.csv("readings")
+curreading <- setup.csv("curreading")
 
 add.progress <- function() {
-  book.num <- menu(strtrim(list.book.titles(),32),title="Select Book:")
-  book.uuid <- list.book.uuid()[book.num]
-  day.num <- menu(Sys.Date()-0:10,title="Select Date Read:") # How to display vertically!?
-  day <- Sys.Date()-(day.num-1)
-  cat("Enter type (percent, pages, location)")
-  type <- user.response()
-  cat("Enter Start Position")
-  startpos <- user.response()
-  cat("Enter Stop Position")
-  stoppos <- user.response()
-  add.log(book.uuid,day,startpos,stoppos,type)
+  book.num <- user.menu(strtrim(list.curreading(),32),title="Select Book:")
+  # Fill in info from currently reading file
+  cr <- get.bookfile(curreading,TRUE)
+  book <- cr[book.num,]
+  book.uuid <- as.character(book$BookID)
+  type <- as.character(book$Type)
+  startpos <- as.numeric(book$Progress)
+  
+  day <- as.character(user.menu(Sys.Date()-0:4,title="Select Date Read:",returnval=1))
+  stoppos <- as.numeric(user.response("Enter Stop Position"))
+  
+  pages <- get.pages.read(type,startpos,stoppos,book.uuid)
+  add.log(book.uuid,day,startpos,stoppos,type,pages)
+  
+  # Update currently reading
+  cr[book.num,"Progress"] <- stoppos
+  write.bookfile("curreading",cr)
 }
 
 
@@ -59,10 +67,7 @@ add.new.book <- function() {
   
 }
 
-user.response <- function() {
-  #readLines(file("stdin"),n=1)
-  readline()
-}
+
 
 list.book.titles <- function() {
   b <- get.bookfile(books,TRUE)

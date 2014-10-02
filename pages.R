@@ -1,8 +1,4 @@
-get.pages.read <- function(logline) {
-  type <- as.character(logline[5])
-  startpos <- as.numeric(logline[3])
-  stoppos <- as.numeric(logline[4])
-  book.uuid <- as.character(logline[2])
+get.pages.read <- function(type,startpos,stoppos,book.uuid) {
   switch(type,
          "location" = get.pages.location(startpos,stoppos,book.uuid),
          "pages" = get.pages(startpos,stoppos),
